@@ -2,6 +2,7 @@ package exercise;
 
 import net.datafaker.Faker;
 import exercise.model.Post;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
@@ -13,9 +14,9 @@ class Data {
         Faker faker = new Faker();
 
         List<Integer> ids = IntStream
-            .range(1, ITEMS_COUNT + 1)
-            .boxed()
-            .toList();
+                .range(1, ITEMS_COUNT + 1)
+                .boxed()
+                .toList();
 
         List<Post> posts = new ArrayList<>();
 
