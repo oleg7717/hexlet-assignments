@@ -3,10 +3,10 @@ package exercise;
 import java.util.List;
 import java.util.Optional;
 
+import exercise.exeption.NotFoundException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,19 +34,18 @@ public class Application {
 
 	// BEGIN
 	@GetMapping("/posts")
-	public ResponseEntity<List<Post>> getPostsByLimitAndOffset(@RequestParam @Nullable Integer limit,
+	public ResponseEntity<List<Post>> getPostsByLimitAndOffset(@RequestParam @Nullable Integer lmt,
 	                                           @RequestParam(defaultValue = "1") Integer pageNumber) {
-		int lim = Optional.ofNullable(limit).orElse(posts.size());
-//		return posts.stream().skip((long) lim * (pageNumber - 1)).limit(lim).toList();
+		int limit = Optional.ofNullable(lmt).orElse(posts.size());
 		return ResponseEntity.ok()
 				.header("X-Total-Count", String.valueOf(posts.size()))
-				.body(posts.stream().skip((long) lim * (pageNumber - 1)).limit(lim).toList());
+				.body(posts.stream().skip((long) limit * (pageNumber - 1)).limit(limit).toList());
 	}
 
 	@GetMapping("/posts/{id}")
-	public ResponseEntity<Optional<Post>> getPost(@PathVariable String id) {
+	public Post getPost(@PathVariable String id) throws NotFoundException {
 		Optional<Post> post = posts.stream().filter(p -> p.getId().equals(id)).findFirst();
-		return new ResponseEntity<>(post, post.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+		return post.orElseThrow(() -> new NotFoundException("Resource with id: " + id + " not found."));
 	}
 
 	@PostMapping("/posts")
@@ -59,14 +58,14 @@ public class Application {
 	}
 
 	@PutMapping("/posts/{id}")
-	public ResponseEntity<Optional<Post>> updatePost(@PathVariable String id, @RequestBody Post data) {
+	public Post updatePost(@PathVariable String id, @RequestBody Post data) throws NotFoundException {
 		Optional<Post> foundPost = posts.stream().filter(post -> post.getId().equals(id)).findFirst();
 		foundPost.ifPresent(post -> {
 			post.setId(data.getId());
 			post.setTitle(data.getTitle());
 			post.setBody(data.getBody());
 		});
-		return new ResponseEntity<>(foundPost, foundPost.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+		return foundPost.orElseThrow(() -> new NotFoundException("Resource with id: " + data.getId() + " not found."));
 	}
 	// END
 
