@@ -27,7 +27,7 @@ public class Application {
     // Хранилище добавленных постов
     @Setter
     private static List<Post> posts = Data.getPosts();
-    //Точка запуска программы
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
