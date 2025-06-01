@@ -35,7 +35,7 @@ public class ProductsController {
 	@PostMapping(path = "")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Product createProduct(@RequestBody Product data) throws ResourceAlreadyExistsException {
-		if (productRepository.findAll().contains(data)) {
+		if (productRepository.findAll().parallelStream().anyMatch(product -> product.equals(data))) {
 			throw new ResourceAlreadyExistsException("Product with title: " + data.getTitle() + " already exists");
 		}
 
