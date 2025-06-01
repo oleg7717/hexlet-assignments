@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import exercise.model.Task;
 import exercise.repository.TaskRepository;
@@ -54,8 +55,13 @@ public class TasksController {
 		Task task = taskRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Task with id: " + id + " not found"));
 
+		taskRepository.findByTitle(data.getTitle()).ifPresent(t -> {
+			if (!t.getId().equals(id))
+				throw new ResourceMismatchException("Task with title: " + t.getTitle() + " exist with id: " + id);
+		});
+
 /*		if (taskRepository.findAll().parallelStream().anyMatch(t -> t.equals(data) && !t.getId().equals(id))) {
-			throw new ResourceMismatchException("You can not update task with title from other task");
+			throw new ResourceMismatchException("Task with such title already exist with id");
 		}*/
 
 		task.setTitle(data.getTitle());
