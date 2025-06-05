@@ -76,35 +76,34 @@ class TaskControllerTest {
 
 	@Test
 	public void testCreate() throws Exception {
+		var data = new HashMap();
+		data.put("title", "title1");
+		data.put("description", "desc");
 		var request = post("/tasks")
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(om.writeValueAsString(createData()));
+				.content(om.writeValueAsString(data));
 		var result = mockMvc.perform(request)
-				.andExpect(status().isCreated())
-				.andReturn();
+				.andExpect(status().isCreated());
 
-		var body = result.getResponse().getContentAsString();
-		assertThatJson(body).and(
-				a -> a.node("title").isEqualTo("task1"),
-				a -> a.node("description").isEqualTo("desc")
-		);
+		Task task = taskRepository.findByTitle((String) data.get("title")).get();
+		assertThat(task).isNotNull();
+		assertThat(task.getTitle()).isEqualTo(data.get("title"));
+		assertThat(task.getDescription()).isEqualTo(data.get("description"));
 	}
 
 	@Test
 	public void testUpdate() throws Exception {
 		var task = createTaskResord();
+		var data = new HashMap();
+		data.put("description", "desc");
 		var request = put("/tasks/{id}", task.getId())
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(om.writeValueAsString(createData()));
+				.content(om.writeValueAsString(data));
 		var result = mockMvc.perform(request)
-				.andExpect(status().isOk())
-				.andReturn();
+				.andExpect(status().isOk());
 
-		var body = result.getResponse().getContentAsString();
-		assertThatJson(body).and(
-				a -> a.node("title").isEqualTo("task1"),
-				a -> a.node("description").isEqualTo("desc")
-		);
+		Task foundTask = taskRepository.findById(task.getId()).get();
+		assertThat(foundTask.getDescription()).isEqualTo(data.get("description"));
 	}
 
 	@Test
@@ -124,14 +123,6 @@ class TaskControllerTest {
 				.create();
 
 		return taskRepository.save(task);
-	}
-
-	public HashMap<String, String> createData() {
-		var data = new HashMap();
-		data.put("title", "task1");
-		data.put("description", "desc");
-
-		return data;
 	}
 	// END
 }
