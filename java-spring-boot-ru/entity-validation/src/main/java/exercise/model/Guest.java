@@ -37,7 +37,7 @@ public class Guest {
 	@Digits(integer = 4, fraction = 0)
 	private String clubCard;
 
-	@Future
+	@FutureOrPresent
 	private LocalDate cardValidUntil;
 	// END
 
