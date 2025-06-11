@@ -80,7 +80,7 @@ public class TasksController {
 	public void delete(@PathVariable long id) {
 		var task = taskRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Task with id " + id + " not found"));
-		taskRepository.delete(task);
+		taskRepository.deleteById(id);
 	}
 	// END
 }
