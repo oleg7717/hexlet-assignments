@@ -29,7 +29,7 @@ public class Category implements BaseEntity {
 
 	@NotBlank
 	@Column(unique = true)
-	@EqualsAndHashCode.Exclude
+	@EqualsAndHashCode.Include
 	private String name;
 
 	@CreatedDate
