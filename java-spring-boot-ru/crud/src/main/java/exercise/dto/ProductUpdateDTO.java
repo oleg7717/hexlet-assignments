@@ -1,20 +1,31 @@
 package exercise.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import exercise.model.Category;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.openapitools.jackson.nullable.JsonNullable;
 
+import java.util.Optional;
+
 @Setter
 @Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductUpdateDTO {
-	@NotNull
-	private JsonNullable<Long> categoryId;
+	private Category category;
+	@JsonProperty("categoryId")
+	private void unpackNested(Integer categoryId) {
+		this.category = new Category();
+		category.setId(categoryId);
+	}
+	private Optional<Long> categoryId;
 
-	@NotBlank
-	private JsonNullable<String> title;
+	@JsonProperty("title")
+	private Optional<String> title;
 
-	@NotNull
-	private JsonNullable<Integer> price;
+	@JsonProperty("price")
+	private Optional<Integer> price;
 }

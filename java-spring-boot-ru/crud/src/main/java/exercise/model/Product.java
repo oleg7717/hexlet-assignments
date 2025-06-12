@@ -28,9 +28,11 @@ public class Product implements BaseEntity {
 
 	@NotBlank
 	@EqualsAndHashCode.Include
+	@JsonProperty("title")
 	private String title;
 
 	@NotNull
+	@JsonProperty("price")
 	private int price;
 
 	@CreatedDate
@@ -40,6 +42,8 @@ public class Product implements BaseEntity {
 	private LocalDate updatedAt;
 
 	@NotNull
-	@ManyToOne
+	@ManyToOne(targetEntity = Category.class)
+	@JoinColumn(name = "category.id")
+	@JsonProperty("categoryId")
 	private Category category;
 }

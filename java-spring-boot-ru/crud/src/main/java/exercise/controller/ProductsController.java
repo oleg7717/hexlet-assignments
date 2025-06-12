@@ -1,5 +1,6 @@
 package exercise.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import exercise.dto.ProductCreateDTO;
@@ -30,8 +31,8 @@ public class ProductsController {
 	@Autowired
 	private CategoryRepository categoryRepository;
 
-/*	@Autowired
-	ObjectMapper objectMapper;*/
+	@Autowired
+	ObjectMapper objectMapper;
 
 
 	// BEGIN
@@ -62,17 +63,18 @@ public class ProductsController {
 	}
 
 	@PutMapping(path = "/{id}")
-	public ProductDTO update(@PathVariable Long id, @Valid @RequestBody ProductUpdateDTO productData) {
-		var categoryId = productData.getCategoryId();
-		if(categoryId != null && categoryId.isPresent()) {
-			categoryRepository.findById(categoryId.get())
+	public ProductDTO update(@PathVariable Long id, @Valid @RequestBody ProductUpdateDTO productData) throws JsonProcessingException {
+		var category = productData.getCategory();
+		if(category != null) {
+			var categoryId = category.getId();
+			categoryRepository.findById(categoryId)
 					.orElseThrow(() -> new ReferenceException("Category with id " + categoryId + " not found"));
 		}
 
 		var product = productRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Product with id " + id + " not found"));
-		productMapper.update(product, productData);
-//		objectMapper.updateValue(product, productData);
+		product.setCategory(category);
+		objectMapper.updateValue(product, productData);
 		productRepository.save(product);
 
 		return productMapper.map(product);

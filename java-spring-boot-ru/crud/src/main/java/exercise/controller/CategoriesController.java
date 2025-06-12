@@ -52,10 +52,8 @@ public class CategoriesController {
 	@PostMapping(path = "/list")
 	@ResponseStatus(HttpStatus.CREATED)
 	public List<CategoryDTO> createList(@Valid @RequestBody List<CategoryCreateDTO> categoryData) {
-		List<Category> categoryDTOList = categoryData.stream()
-				.map(categoryMapper::map).toList();
-		return categoryDTOList.stream()
-				.peek(c -> categoryRepository.save(c))
+		return categoryRepository.saveAll(categoryData.stream()
+				.map(categoryMapper::map).toList()).stream()
 				.map(categoryMapper::map).toList();
 	}
 }

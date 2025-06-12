@@ -9,7 +9,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
 // BEGIN
-@Mapper(uses = { JsonNullableMapper.class, ReferenceMapper.class },
+@Mapper(uses = {ReferenceMapper.class},
 		componentModel = MappingConstants.ComponentModel.SPRING,
 		unmappedTargetPolicy = ReportingPolicy.IGNORE,
 		nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
